@@ -38,12 +38,14 @@ document.addEventListener("DOMContentLoaded", function () {
     noteEditor.value = "";
   }
 
-  //   Отображение списка заметок
+  // Отображение списка заметок
   function renderNotesList(note) {
     nodeList.innerHTML = "";
 
     notes.forEach((note) => {
-      const noteHtml = `<li class="note__item">${note.title}</li>`;
+      const noteHtml = `<li class="note__item">${note.title}<button data-action="delete" class="note__btn-delete">
+            <img src="./img/delete-icon.svg" alt="delete" />
+          </button></li>`;
       nodeList.insertAdjacentHTML("beforeend", noteHtml);
     });
   }
@@ -51,5 +53,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Сохранить данные в LocalStorage
   function saveToLocalStorage() {
     localStorage.setItem("notes", JSON.stringify(notes));
+  }
+
+  // Удаление записи
+  function deleteNote(id) {
+    console.log(id);
+    
   }
 });
