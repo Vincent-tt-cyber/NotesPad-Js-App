@@ -14,7 +14,7 @@ body {
 }
 
 .sidebar {
-  width: 200px;
+  width: 300px;
   background-color: #fff;
   padding: 15px;
   border-radius: 5px;
@@ -54,6 +54,26 @@ body {
   background-color: #ccc;
   padding: 5px 10px;
   border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note__btn-delete {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+}
+
+.note__btn-delete img {
+  width: 100%;
 }
 
 .editor-container {
