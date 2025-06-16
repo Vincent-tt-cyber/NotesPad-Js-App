@@ -9,24 +9,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
+  if (localStorage.getItem("notes")) {
+    notes = JSON.parse(localStorage.getItem("notes"));
+  }
+
+  // Отображение данных при перезагрузке/открытии страницы
+  notes.forEach((note) => renderNotesList(note));
+
   // Создание заметки
   function addNote() {
-    console.log("Создание");
     let titleNote = noteTitle.value;
+    let descriptionNote = noteEditor.value;
+
     const newNote = {
       id: Date.now().toString(),
       title: titleNote || "Без названия",
-      description: "",
+      description: descriptionNote,
     };
 
     notes.unshift(newNote);
 
     renderNotesList(newNote);
 
-    console.log(notes);
+    saveToLocalStorage();
 
     noteTitle.focus();
     noteTitle.value = "";
+    noteEditor.value = "";
   }
 
   //   Отображение списка заметок
@@ -37,5 +46,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const noteHtml = `<li class="note__item">${note.title}</li>`;
       nodeList.insertAdjacentHTML("beforeend", noteHtml);
     });
+  }
+
+  // Сохранить данные в LocalStorage
+  function saveToLocalStorage() {
+    localStorage.setItem("notes", JSON.stringify(notes));
   }
 });
