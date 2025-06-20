@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const noteTitle = document.querySelector(".note__title");
   const addNoteBtn = document.querySelector(".add-note");
 
+  let currentNoteID = null;
+
   // Показать данные заметки
   nodeList.addEventListener("click", showNoteDetails);
 
@@ -11,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
   nodeList.addEventListener("click", deleteNote);
 
   // Добавить новую заметку
-  addNoteBtn.addEventListener("click", addNote);
+  addNoteBtn.addEventListener("click", handleNoteActions);
 
   let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
@@ -21,6 +23,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Отображение данных при перезагрузке/открытии страницы
   notes.forEach((note) => renderNotesList(note));
+
+  function handleNoteActions() {
+    if (currentNoteID) {
+      saveNoteChanges(currentNoteID);
+    } else {
+      addNote();
+    }
+  }
 
   // Создание заметки
   function addNote() {
@@ -78,41 +88,64 @@ document.addEventListener("DOMContentLoaded", function () {
 
     parentNode.remove();
 
+    addNoteBtn.textContent = "Новая запись";
     noteTitle.value = "";
     noteEditor.value = "";
   }
 
   // Отображение заметки
   function showNoteDetails(e) {
+    // Если клие по кнопке "Удалить"
     if (e.target.dataset.action === "delete") return;
 
+    // Поиск родительского элемента - заметка
     let parentNode = e.target.closest(".note__item");
-    if (!parentNode) return;
+    if (!parentNode) {
+      // parentNode.classList.remove("active");
+      return;
+    }
 
+    // Удаляем у всех класс active
     document
       .querySelectorAll(".note__item")
       .forEach((item) => item.classList.remove("active"));
 
+    // Если есть клик по заметке
     if (parentNode) {
       parentNode.classList.add("active");
 
+      // Поиск нужной заметки
       let currentNote = notes.find((item) => item.id == parentNode.id);
-      console.log(currentNote);
+
+      currentNoteID = currentNote.id;
+
+      addNoteBtn.textContent = "Сохранить";
 
       noteTitle.value = currentNote.title;
       noteEditor.value = currentNote.description;
-
-      // TODO: Сделать логику клика за пределами note__item чтобы убрать класс active
-
-      // noteTitle.addEventListener("input", function () {
-      //   addNoteBtn.textContent = "Сохранить изменения";
-      //   noteTitle = this.value;
-
-      //   this.addEventListener("blur", saveToLocalStorage());
-      // });
     } else {
+      parentNode.classList.remove("active");
       noteTitle.value = "";
       noteEditor.value = "";
     }
+  }
+
+  // Сохранение изменений заметки
+  function saveNoteChanges(noteID) {
+    let currentNote = notes.find((note) => note.id == noteID);
+
+    currentNote.title = noteTitle.value;
+    currentNote.description = noteEditor.value;
+
+    console.log(currentNote);
+
+    saveToLocalStorage();
+    renderNotesList();
+
+    currentNoteID = null;
+
+    noteTitle.value = "";
+    noteEditor.value = "";
+    addNoteBtn.textContent = "Новая запись";
   }
 });
